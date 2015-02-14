@@ -1,1 +1,1 @@
-json.extract! question, :id, :value
+json.extract! question, :id, :value, :image_url

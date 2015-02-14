@@ -11,10 +11,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150214164520) do
+ActiveRecord::Schema.define(version: 20150214172625) do
 
   create_table "questions", force: :cascade do |t|
     t.string "value"
+    t.string "image_url"
   end
 
 end
