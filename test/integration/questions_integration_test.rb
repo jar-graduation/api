@@ -44,6 +44,20 @@ class QuestionsIntegrationTest < ActionDispatch::IntegrationTest
     assert_equal @question.image_url, json['image_url']
   end
 
+  test 'question : calculator_allowed : default false' do
+    get "/questions/#{@question.id}.json"
+    assert_equal false, json['calculator_allowed']
+  end
+
+  test 'question : calculator_allowed' do
+    @question.calculator_allowed = true;
+    @question.save
+
+    get "/questions/#{@question.id}.json"
+
+    assert_equal true, json['calculator_allowed']
+  end
+
   def json
     @json ||= JSON.parse(response.body)
   end
