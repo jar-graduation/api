@@ -58,6 +58,11 @@ class QuestionsIntegrationTest < ActionDispatch::IntegrationTest
     assert_equal true, json['calculator_allowed']
   end
 
+  test 'question : answer_type : default open' do
+    get "/questions/#{@question.id}.json"
+    assert_equal 'open', json['answer_type']
+  end
+
   def json
     @json ||= JSON.parse(response.body)
   end

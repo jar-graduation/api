@@ -11,12 +11,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150214172951) do
+ActiveRecord::Schema.define(version: 20150214174025) do
 
   create_table "questions", force: :cascade do |t|
     t.string  "value"
     t.string  "image_url"
     t.boolean "calculator_allowed", default: false
+    t.string  "answer_type"
   end
 
 end
