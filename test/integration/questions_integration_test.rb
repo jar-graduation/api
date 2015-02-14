@@ -11,6 +11,11 @@ class QuestionsIntegrationTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test 'questions : count' do
+    get '/questions.json'
+    assert_equal 1, json.count
+  end
+
   test 'route : questions/{id}' do
     get "/questions/#{@question.id}.json"
     assert_response :success

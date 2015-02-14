@@ -1,1 +1,1 @@
-json.extract! @question, :id, :value
+json.partial! @question
