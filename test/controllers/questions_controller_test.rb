@@ -15,9 +15,4 @@ class QuestionsControllerTest < ActionController::TestCase
     assert assigns(:question).id
   end
 
-  test 'new : assigns new object of question' do
-    get :new
-    assert_instance_of Question, assigns(:question)
-  end
-
 end
