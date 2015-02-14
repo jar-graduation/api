@@ -10,4 +10,19 @@ class ActiveSupport::TestCase
   fixtures :all
 
   # Add more helper methods to be used by all tests here...
+
+  def json
+    @json ||= JSON.parse(response.body)
+  end
+
+  def assert_presence(obj, attribute)
+    error_message = obj.errors.get(attribute);
+    assert (error_message.include? "can't be blank"), error_message
+  end
+
+  def assert_uniqueness(obj, attribute)
+    error_message = obj.errors.get(attribute);
+    assert (error_message.include? ""), error_message
+  end
+
 end

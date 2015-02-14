@@ -11,7 +11,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150214174025) do
+ActiveRecord::Schema.define(version: 20150214211902) do
+
+  create_table "levels", force: :cascade do |t|
+    t.integer "year"
+    t.string  "value"
+    t.string  "name"
+  end
+
+  create_table "question_levels", force: :cascade do |t|
+    t.integer "question_id"
+    t.integer "level_id"
+  end
 
   create_table "questions", force: :cascade do |t|
     t.string  "value"

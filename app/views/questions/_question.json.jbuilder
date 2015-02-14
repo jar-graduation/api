@@ -1,1 +1,1 @@
-json.extract! question, :id, :value, :image_url, :calculator_allowed, :answer_type
+json.extract! question, :id, :value, :image_url, :calculator_allowed, :answer_type, :levels

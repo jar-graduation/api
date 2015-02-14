@@ -101,8 +101,4 @@ class QuestionsIntegrationTest < ActionDispatch::IntegrationTest
     assert_response 422
   end
 
-  def json
-    @json ||= JSON.parse(response.body)
-  end
-
 end
