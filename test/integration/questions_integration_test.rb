@@ -3,7 +3,7 @@ require 'test_helper'
 class QuestionsIntegrationTest < ActionDispatch::IntegrationTest
 
   setup do
-    @question = Question.create!
+    @question = Question.create(value: 'Test value')
   end
 
   test 'route : questions' do
@@ -61,6 +61,44 @@ class QuestionsIntegrationTest < ActionDispatch::IntegrationTest
   test 'question : answer_type : default open' do
     get "/questions/#{@question.id}.json"
     assert_equal 'open', json['answer_type']
+  end
+
+  test 'question : create : success' do
+    count = Question.all.size
+    data = {
+        question: {
+            value: 'testValue'
+        }
+    }.to_json
+    header = { 'Content-Type' => 'application/json' }
+
+    post '/questions.json', data, header
+
+    assert_equal count+1, Question.all.size
+  end
+
+  test 'question : create : presence_of error' do
+    data = {
+        question: {
+            value: ''
+        }
+    }.to_json
+    header = { 'Content-Type' => 'application/json' }
+
+    post '/questions.json', data, header
+
+    assert_response 422
+  end
+
+  test 'question : create : no data' do
+    header = { 'Content-Type' => 'application/json' }
+    post '/questions.json', nil, header
+    assert_response 422
+  end
+
+  test 'question : create : wrong content-type' do
+    post '/questions.json', nil, nil
+    assert_response 422
   end
 
   def json
