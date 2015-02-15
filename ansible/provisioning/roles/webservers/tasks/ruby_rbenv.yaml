@@ -29,6 +29,9 @@
 - name: install ruby-build plugin
   git: repo=git://github.com/sstephenson/ruby-build.git dest={{ user_home }}/.rbenv/plugins/ruby-build update=no
 
+- name: install rbenv-vars plugin
+  git: repo=git://github.com/sstephenson/rbenv-vars.git dest={{ user_home }}/.rbenv/plugins/rbenv-vars update=no
+
 - name: add rbenv init to ~/.bashrc
   lineinfile: >
     dest={{ user_home }}/.bashrc
