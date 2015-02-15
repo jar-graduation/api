@@ -1,0 +1,83 @@
+# Step by step guide
+#
+# ----------( Get a server )-------------------------------------------
+#
+#   Go to an server provider follow there registration and proceed when
+#   you receive an ip address of your server for them.
+#
+# ----------( Create new user on server )--------------------
+#
+# - $ ssh root@<host alias>
+# - # adduser <name>           # Do this if you want to make a new user or when its your first user other than root.
+# - # adduser <name> sudo
+# - disconnect from server (Ctrl-D)
+#
+# ----------( Add your new server to your ssh config )-----------------
+#
+# - Put this in ~/.ssh/config       # On your machine
+#
+#   Host <host_alias>               # E.g. company name
+#    Hostname <server_ip>           # Ip your server provider gave you.
+#    User <user_name>               # E.g. deploy
+#
+# ----------( Add github to known hosts )--------------------
+#
+# - $ ssh <host_alias> 'mkdir -p ~/.ssh'
+# - $ scp ~/.ssh/id_rsa <name>@<ip>:~/.ssh/  # for Permission denied problems with public keys
+# - (If you don't have a id_rsa) $ ssh-keygen -t rsa
+# - $ ssh <name>@<ip>
+# - $ ssh git@github.com       # yes to add to known_hosts
+# - disconnect from server (Ctrl-D)
+#
+# ----------( Copy SSH key to server )--------------------
+#
+#   Mac / Windows ( install ssh-copy-id )
+# - $ sudo curl https://raw.githubusercontent.com/beautifulcode/ssh-copy-id-for-OSX/master/ssh-copy-id.sh -o /usr/local/bin/ssh-copy-id
+# - $ sudo chmod +x /usr/local/bin/ssh-copy-id
+#
+# - $ ssh-copy-id -i ~/.ssh/id_rsa.pub root@<host alias>
+#
+# ---------( Install Ansible on your machine )---------------------
+#
+#   Ubuntu
+#   $ sudo apt-get install software-properties-common
+#   $ sudo apt-add-repository ppa:ansible/ansible
+#   $ sudo apt-get update
+#   $ sudo apt-get install ansible
+#
+#   Mac
+#   $ brew update
+#   $ brew install ansible
+#
+#   $ ansible                       # To see if it runs, you should see the help doc
+#
+# ---------( Update inventory files (production/staging) )---------------------
+#
+# - Change ip in inventory file to ip of server:
+#   - inventories/production
+#   - inventories/staging
+#
+# ---------( Update variable files )---------------------
+#
+# - Change according to your information/settings you want
+#   - variables/main
+#   - variables/production
+#   - variables/staging
+#
+# ---------( Provisioning server )---------------------
+# - Production
+# - $ ansible-playbook -i inventories/production provisioning/site.yaml -vvvv -k -K -u <name>
+#
+# OR Prodcution & Staging
+# - $ ansible-playbook -i inventories/production_staging provisioning/site.yaml -vvvv -k -K -u <name>
+#
+# - $ ansible-playbook -i inventories/production_staging deployment/deploy_app.yml -vvvv -k -K -u <name>
+# - $ ansible-playbook -i inventories/production deployment/deploy_app.yml -vvvv -k -K -u <name>
+# ------------------------------
+#
+# Flag descriptions (check ansible-playbook -h for more flags)
+#    -k, --ask-pass        ask for SSH password.
+#    -K, --ask-sudo-pass   ask for sudo password.
+#    -i INVENTORY, --inventory-file=INVENTORY specify inventory host file.
+#    -vvvv connection debugging, and for the nice colors.
+

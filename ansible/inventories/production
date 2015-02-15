@@ -1,0 +1,8 @@
+[webserver]
+178.62.167.105
+
+[webserver:vars]
+port=80
+server_name=shinav.com
+app_env=production
+rails_env=production

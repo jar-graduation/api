@@ -1,0 +1,14 @@
+---
+- hosts: webserver
+  roles:
+    - webservers
+    - databases
+  vars_files:
+    - ../variables/main
+  tasks:
+    - include: roles/webservers/tasks/ruby_rbenv.yaml
+    - include: roles/webservers/tasks/nginx_passenger.yaml
+    - include: roles/databases/tasks/postgresql.yaml
+  handlers:
+    - include: roles/databases/handlers/postgresql.yaml
+    - include: roles/webservers/handlers/nginx.yaml

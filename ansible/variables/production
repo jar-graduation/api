@@ -1,0 +1,7 @@
+server_name: shinav.com        # registered domain name.
+app_env: production            # determines folder structure
+
+# ------------Ruby on Rails------------------
+rails_env: production
+
+git_branch: master
