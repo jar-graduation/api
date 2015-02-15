@@ -1,0 +1,48 @@
+---
+- name: Add postgres repository
+  apt_repository: repo='deb http://apt.postgresql.org/pub/repos/apt/ precise-pgdg main' state=present
+  sudo: yes
+
+- name: Add postgres repository key
+  apt_key: url=http://apt.postgresql.org/pub/repos/apt/ACCC4CF8.asc state=present
+  sudo: yes
+
+- name: apt-get update
+  command: apt-get update
+  sudo: yes
+
+- name: Install postgresql
+  apt: pkg={{ item }} state=present force=yes
+  with_items:
+    - postgresql-{{ pg_version }}
+    - python-psycopg2
+  sudo: yes
+
+- name: place postgresql client auth configuration
+  copy: src=files/pg_hba.conf dest=/etc/postgresql/{{ pg_version }}/main/pg_hba.conf
+  sudo: yes
+  notify:
+    - restart postgresql
+
+- name: place postgresql main conf
+  copy: src=files/postgresql.conf dest=/etc/postgresql/{{ pg_version }}/main/postgresql.conf
+  sudo: yes
+  notify:
+    - restart postgresql
+
+- name: ensure postgresql is running
+  service: name=postgresql state=started
+
+- name: make postgres user
+  postgresql_user: name={{ db_user }} password={{ db_password }} role_attr_flags=SUPERUSER,CREATEDB,CREATEROLE,LOGIN
+  sudo_user: postgres
+  sudo: yes
+
+- name: create production database
+  postgresql_db: >
+    name={{ app_name }}
+    encoding='utf8'
+    template='template0'
+    owner={{ db_user }}
+  sudo_user: postgres
+  sudo: yes

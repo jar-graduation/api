@@ -1,0 +1,72 @@
+---
+- name: apt-get update
+  command: apt-get update
+  sudo: yes
+
+- name: install ruby dependencies
+  apt: pkg={{ item }}
+  sudo: yes
+  with_items:
+    - git-core
+    - curl
+    - build-essential
+    - tklib
+    - zlib1g-dev
+    - libssl-dev
+    - libreadline-gplv2-dev
+    - libxml2
+    - libxml2-dev
+    - libxslt1-dev
+    - libcurl4-openssl-dev
+    - libapr1-dev
+    - libaprutil1-dev
+    - libpq-dev
+    - libffi-dev
+
+- name: install rbenv
+  git: repo=git://github.com/sstephenson/rbenv.git dest={{ user_home }}/.rbenv update=no
+
+- name: install ruby-build plugin
+  git: repo=git://github.com/sstephenson/ruby-build.git dest={{ user_home }}/.rbenv/plugins/ruby-build update=no
+
+- name: install rbenv-vars plugin
+  git: repo=git://github.com/sstephenson/rbenv-vars.git dest={{ user_home }}/.rbenv/plugins/rbenv-vars update=no
+
+- name: add rbenv init to ~/.bashrc
+  lineinfile: >
+    dest={{ user_home }}/.bashrc
+    line='eval "$(rbenv init -)"'
+    insertbefore=BOF
+    regexp=eval.*rbenv
+    create=yes
+    state=present
+
+- name: update PATH in ~/.bashrc for rbenv
+  lineinfile: >
+    dest={{ user_home }}/.bashrc
+    line=export\ PATH="$HOME/.rbenv/bin:$PATH"
+    insertbefore=BOF
+    regexp=PATH.*rbenv
+
+- name: export home to user
+  shell: export HOME="{{ user_home }}"
+
+- name: check if ruby {{ ruby_version }} is installed
+  shell: rbenv versions | grep {{ ruby_version }}
+  register: ruby_installed
+  ignore_errors: yes
+  changed_when: false
+
+- name: install ruby {{ ruby_version }} unless it is already installed
+  command: rbenv install {{ ruby_version }}
+  when: ruby_installed | failed
+
+- name: check current global ruby
+  command: rbenv global
+  register: ruby_global
+  changed_when: false
+
+- name: make ruby {{ ruby_version }} global
+  command: rbenv global {{ ruby_version }}
+  when: "ruby_version != ruby_global.stdout"
+

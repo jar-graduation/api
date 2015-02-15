@@ -3,6 +3,7 @@ source 'https://rubygems.org'
 ruby '2.2.0'
 
 gem 'rails', '4.2.0'
+
 gem 'sqlite3'
 
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
