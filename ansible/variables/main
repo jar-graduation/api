@@ -1,0 +1,31 @@
+# ------------General------------------
+# name of an existing user on server, when changed also change ssh user in hosts file.
+user:                   deploy
+ruby_version:           2.2.0
+
+# ------------Github------------------
+github_username:        jeroenstevens
+
+# name of repo
+app_name:               api
+app_repo:               git@github.com:{{ github_username }}/{{ app_name }}.git
+git_ssh_key:            ~/.ssh/id_rsa
+
+# ------------Folder destinations------------------
+user_home: "/home/{{ user }}"
+app_root:  "{{ user_home }}/{{ app_name }}/{{ app_env }}"
+root_path: "{{ app_root }}/public;"
+
+# ------------Database------------------
+db_ip: 178.62.167.105
+pg_version: 9.3
+
+db_host: "{{ db_ip }}"
+db_user: "{{ user }}"          # Change this if you don't want your db user to be the same as user.
+db_password: "{{lookup('password', 'credentials/postgresql length=15')}}"
+
+# ------------Passenger------------------
+passenger_version: 4.0.53
+passenger_root: "{{ user_home }}/.rbenv/versions/{{ ruby_version }}/lib/ruby/gems/{{ ruby_version }}/gems/passenger-{{ passenger_version }}"
+passenger_ruby: "{{ user_home }}/.rbenv/versions/{{ ruby_version }}/bin/ruby"
+

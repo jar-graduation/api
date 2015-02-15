@@ -1,0 +1,65 @@
+---
+- name: install required gems (bundler passenger)
+  gem: name={{ item }} state=present user_install=no
+  with_items:
+    - bundler
+    - passenger
+
+- name: create swap file (to surpass the ram needed for module installation)
+  command: dd if=/dev/zero of=/swapfile bs=1024 count=1024k
+  sudo: yes
+
+- name: create swap area
+  command: mkswap /swapfile
+  sudo: yes
+
+- name: activate swap file
+  command: swapon /swapfile
+  sudo: yes
+
+- name: set swappiness
+  command: echo 10 | sudo tee /proc/sys/vm/swappiness; echo vm.swappiness = 10 | sudo tee -a /etc/sysctl.conf
+
+- name: set passenger module root
+  command: which passenger-install-nginx-module
+  register: passenger_module_root
+
+- name: compile passenger nginx module
+  shell: '{{ user_home }}/.rbenv/shims/passenger-install-nginx-module --auto --auto-download --prefix=/opt/nginx creates=/opt/nginx'
+  sudo: yes
+
+- name: deactivate swap file
+  command: swapoff -a
+  sudo: yes
+
+- name: remove swap file
+  command: rm -rf /swapfile
+  sudo: yes
+
+- name: get nginx service script
+  copy: src=files/nginx dest=/etc/init.d/
+  sudo: yes
+
+- name: ensure that nginx will be up after reboots
+  command: update-rc.d nginx defaults
+  sudo: yes
+
+- name: set nginx service command
+  command: chmod +x /etc/init.d/nginx
+  sudo: yes
+  notify:
+    - restart nginx
+
+- name: write nginx.conf
+  template: src=nginx_{{ app_env }}.conf.j2 dest=/opt/nginx/conf/nginx.conf
+  sudo: yes
+  notify:
+    - restart nginx
+
+- name: ensure no default site is defined
+  file: path=/etc/nginx/sites-enabled/default state=absent
+  sudo: yes
+
+- name: ensure nginx is running
+  service: name=nginx state=started
+  sudo: yes
