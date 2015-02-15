@@ -30,7 +30,7 @@ set :shared_paths, ['config/database.yml', 'log', '.rbenv-vars']
 
 task :pro do
   set :rails_env, "production"
-  set :branch, "deployment-setup"
+  set :branch, "master"
   set :deploy_to, "/home/#{user}/#{app_name}/#{rails_env}"
 end
 
