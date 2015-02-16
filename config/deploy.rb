@@ -21,7 +21,7 @@ set :repository, "https://github.com/jar-graduation/#{app_name}.git"
 
 # Manually create these paths in shared/ (eg: shared/config/database.yml) in your server.
 # They will be linked in the 'deploy:link_shared_paths' step.
-set :shared_paths, ['config/database.yml', 'log', '.rbenv-vars']
+set :shared_paths, ['config/database.yml', 'log']
 
 # Optional settings:
 #   set :user, 'foobar'    # Username in the server to SSH to.
@@ -61,7 +61,11 @@ task :deploy => :environment do
     invoke :'git:clone'
     invoke :'deploy:link_shared_paths'
     invoke :'bundle:install'
-    invoke :'rails:db_migrate'
+
+    queue %[cd #{deploy_to}/current]
+    queue %[echo "-----> bundle exec rake db:migrate RAILS_ENV=#{rails_env}"]
+    queue %[bundle exec rake db:migrate RAILS_ENV=#{rails_env}]
+
     invoke :'rails:assets_precompile'
     invoke :'deploy:cleanup'
 
